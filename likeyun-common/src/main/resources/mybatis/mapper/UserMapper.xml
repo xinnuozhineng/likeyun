@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="net.likeyun.common.mapper.UserMapper">
+    <insert id="register" keyProperty="id">
+        insert into t_${role.getDesc}
+        (username,password,create_time,role)
+        values
+        (#{username},#{password},#{createTime},#{role,typeHandler=net.likeyun.common.enum_base.RoleEnumTypeHandler})
+    </insert>
+
+
+    <select id="getComponentByRole" resultType="java.lang.String">
+        select c.component_name
+        from t_role_component rc
+        inner join t_component c on rc.component_id = c.id
+        where rc.role = #{roleValue}
+    </select>
+
+    <select id="getComponentByUserIdAndRole" resultType="java.lang.String">
+        select c.component_name
+        from t_user_component uc
+        inner join t_component c on c.id = uc.component_id
+        where uc.user_id = #{userId} and uc.role = #{roleValue}
+    </select>
+
+    <select id="isExist" resultType="java.lang.Integer">
+        <foreach collection="enumList" item="item" separator="union all">
+            select id
+            from t_${item.getDesc}
+            where username = #{username}
+        </foreach>
+    </select>
+</mapper>
